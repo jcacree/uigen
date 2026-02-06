@@ -5,8 +5,8 @@ import { prisma } from "@/lib/prisma";
 
 interface CreateProjectInput {
   name: string;
-  messages: any[];
-  data: Record<string, any>;
+  messages: unknown[];
+  data: Record<string, unknown>;
 }
 
 export async function createProject(input: CreateProjectInput) {

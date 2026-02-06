@@ -2,7 +2,7 @@
 const STORAGE_KEY = "uigen_has_anon_work";
 const DATA_KEY = "uigen_anon_data";
 
-export function setHasAnonWork(messages: any[], fileSystemData: any) {
+export function setHasAnonWork(messages: unknown[], fileSystemData: unknown) {
   if (typeof window === "undefined") return;
   
   // Only set if there's actual content
@@ -17,7 +17,7 @@ export function getHasAnonWork(): boolean {
   return sessionStorage.getItem(STORAGE_KEY) === "true";
 }
 
-export function getAnonWorkData(): { messages: any[], fileSystemData: any } | null {
+export function getAnonWorkData(): { messages: unknown[], fileSystemData: unknown } | null {
   if (typeof window === "undefined") return null;
   
   const data = sessionStorage.getItem(DATA_KEY);

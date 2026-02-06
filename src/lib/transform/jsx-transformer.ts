@@ -23,6 +23,7 @@ export { ${componentName} };
 export function transformJSX(
   code: string,
   filename: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   existingFiles: Set<string>
 ): TransformResult {
   try {

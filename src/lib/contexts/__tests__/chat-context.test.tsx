@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor, act, cleanup } from "@testing-library/react";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
 import { ChatProvider, useChat } from "../chat-context";
 import { useFileSystem } from "../file-system-context";
 import { useChat as useAIChat } from "@ai-sdk/react";
@@ -55,12 +55,12 @@ describe("ChatContext", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useFileSystem as any).mockReturnValue({
+    vi.mocked(useFileSystem).mockReturnValue({
       fileSystem: mockFileSystem,
       handleToolCall: mockHandleToolCall,
     });
 
-    (useAIChat as any).mockReturnValue(mockUseAIChat);
+    vi.mocked(useAIChat).mockReturnValue(mockUseAIChat);
   });
 
   afterEach(() => {
@@ -85,7 +85,7 @@ describe("ChatContext", () => {
       { id: "2", role: "assistant" as const, content: "Hi there!" },
     ];
 
-    (useAIChat as any).mockReturnValue({
+    vi.mocked(useAIChat).mockReturnValue({
       ...mockUseAIChat,
       messages: initialMessages,
     });
@@ -112,7 +112,7 @@ describe("ChatContext", () => {
   test("tracks anonymous work when no project ID", async () => {
     const mockMessages = [{ id: "1", role: "user", content: "Hello" }];
 
-    (useAIChat as any).mockReturnValue({
+    vi.mocked(useAIChat).mockReturnValue({
       ...mockUseAIChat,
       messages: mockMessages,
     });
@@ -134,7 +134,7 @@ describe("ChatContext", () => {
   test("does not track anonymous work when project ID exists", async () => {
     const mockMessages = [{ id: "1", role: "user", content: "Hello" }];
 
-    (useAIChat as any).mockReturnValue({
+    vi.mocked(useAIChat).mockReturnValue({
       ...mockUseAIChat,
       messages: mockMessages,
     });
@@ -154,7 +154,7 @@ describe("ChatContext", () => {
     const mockHandleInputChange = vi.fn();
     const mockHandleSubmit = vi.fn();
 
-    (useAIChat as any).mockReturnValue({
+    vi.mocked(useAIChat).mockReturnValue({
       ...mockUseAIChat,
       handleInputChange: mockHandleInputChange,
       handleSubmit: mockHandleSubmit,
@@ -178,9 +178,9 @@ describe("ChatContext", () => {
   });
 
   test("handles tool calls", () => {
-    let onToolCallHandler: any;
+    let onToolCallHandler: ({ toolCall }: { toolCall: { toolName: string; args: Record<string, unknown> } }) => void;
 
-    (useAIChat as any).mockImplementation((config: any) => {
+    vi.mocked(useAIChat).mockImplementation((config: Record<string, unknown>) => {
       onToolCallHandler = config.onToolCall;
       return mockUseAIChat;
     });

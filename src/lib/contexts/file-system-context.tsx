@@ -7,11 +7,11 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
-import { VirtualFileSystem, FileNode } from "@/lib/file-system";
+import { VirtualFileSystem } from "@/lib/file-system";
 
 interface ToolCall {
   toolName: string;
-  args: any;
+  args: Record<string, unknown>;
 }
 
 interface FileSystemContextType {
@@ -40,7 +40,7 @@ export function FileSystemProvider({
 }: {
   children: React.ReactNode;
   fileSystem?: VirtualFileSystem;
-  initialData?: Record<string, any>;
+  initialData?: Record<string, unknown>;
 }) {
   const [fileSystem] = useState(() => {
     const fs = providedFileSystem || new VirtualFileSystem();

@@ -157,7 +157,7 @@ export class VirtualFileSystem {
 
     // If it's a directory, remove all children recursively
     if (file.type === "directory" && file.children) {
-      for (const [_, child] of file.children) {
+      for (const [, child] of file.children) {
         this.deleteFile(child.path);
       }
     }
@@ -239,7 +239,7 @@ export class VirtualFileSystem {
 
   private updateChildrenPaths(node: FileNode): void {
     if (node.type === "directory" && node.children) {
-      for (const [_, child] of node.children) {
+      for (const [, child] of node.children) {
         const oldChildPath = child.path;
         child.path = node.path + "/" + child.name;
 

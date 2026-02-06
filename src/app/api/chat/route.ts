@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     messages,
     files,
     projectId,
-  }: { messages: any[]; files: Record<string, FileNode>; projectId?: string } =
+  }: { messages: unknown[]; files: Record<string, FileNode>; projectId?: string } =
     await req.json();
 
   messages.unshift({
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     messages,
     maxTokens: 10_000,
     maxSteps: isMockProvider ? 4 : 40,
-    onError: (err: any) => {
+    onError: (err: unknown) => {
       console.error(err);
     },
     tools: {

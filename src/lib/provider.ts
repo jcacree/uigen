@@ -3,6 +3,7 @@ import {
   LanguageModelV1,
   LanguageModelV1StreamPart,
   LanguageModelV1Message,
+  LanguageModelV1FinishReason,
 } from "@ai-sdk/provider";
 
 const MODEL = "claude-haiku-4-5";
@@ -30,8 +31,8 @@ export class MockLanguageModel implements LanguageModelV1 {
         if (Array.isArray(content)) {
           // Extract text from content parts
           const textParts = content
-            .filter((part: any) => part.type === "text")
-            .map((part: any) => part.text);
+            .filter((part) => part.type === "text")
+            .map((part) => (part as { type: "text"; text: string }).text);
           return textParts.join(" ");
         } else if (typeof content === "string") {
           return content;
@@ -41,7 +42,7 @@ export class MockLanguageModel implements LanguageModelV1 {
     return "";
   }
 
-  private getLastToolResult(messages: LanguageModelV1Message[]): any {
+  private getLastToolResult(messages: LanguageModelV1Message[]): unknown {
     // Find the last tool message
     for (let i = messages.length - 1; i >= 0; i--) {
       if (messages[i].role === "tool") {
@@ -438,27 +439,27 @@ export default function App() {
 
     // Build response from parts
     const textParts = parts
-      .filter((p) => p.type === "text-delta")
-      .map((p) => (p as any).textDelta)
+      .filter((p): p is Extract<LanguageModelV1StreamPart, { type: "text-delta" }> => p.type === "text-delta")
+      .map((p) => p.textDelta)
       .join("");
 
     const toolCalls = parts
-      .filter((p) => p.type === "tool-call")
+      .filter((p): p is Extract<LanguageModelV1StreamPart, { type: "tool-call" }> => p.type === "tool-call")
       .map((p) => ({
         toolCallType: "function" as const,
-        toolCallId: (p as any).toolCallId,
-        toolName: (p as any).toolName,
-        args: (p as any).args,
+        toolCallId: p.toolCallId,
+        toolName: p.toolName,
+        args: p.args,
       }));
 
     // Get finish reason from finish part
-    const finishPart = parts.find((p) => p.type === "finish") as any;
+    const finishPart = parts.find((p): p is Extract<LanguageModelV1StreamPart, { type: "finish" }> => p.type === "finish");
     const finishReason = finishPart?.finishReason || "stop";
 
     return {
       text: textParts,
       toolCalls,
-      finishReason: finishReason as any,
+      finishReason: finishReason as LanguageModelV1FinishReason,
       usage: {
         promptTokens: 100,
         completionTokens: 200,
@@ -478,12 +479,11 @@ export default function App() {
     options: Parameters<LanguageModelV1["doStream"]>[0]
   ): Promise<Awaited<ReturnType<LanguageModelV1["doStream"]>>> {
     const userPrompt = this.extractUserPrompt(options.prompt);
-    const self = this;
 
     const stream = new ReadableStream<LanguageModelV1StreamPart>({
-      async start(controller) {
+      start: async (controller) => {
         try {
-          const generator = self.generateMockStream(options.prompt, userPrompt);
+          const generator = this.generateMockStream(options.prompt, userPrompt);
           for await (const chunk of generator) {
             controller.enqueue(chunk);
           }

@@ -24,7 +24,7 @@ const mockFileSystem = {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  (VirtualFileSystem as any).mockImplementation(() => mockFileSystem);
+  vi.mocked(VirtualFileSystem).mockImplementation(() => mockFileSystem);
   mockFileSystem.getAllFiles.mockReturnValue(new Map());
 });
 
@@ -237,7 +237,7 @@ test("uses provided file system when passed", () => {
 
   const { result } = renderHook(() => useFileSystem(), {
     wrapper: ({ children }) => (
-      <FileSystemProvider fileSystem={customFileSystem as any}>
+      <FileSystemProvider fileSystem={customFileSystem as VirtualFileSystem}>
         {children}
       </FileSystemProvider>
     ),

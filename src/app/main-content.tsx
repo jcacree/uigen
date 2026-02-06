@@ -23,8 +23,8 @@ interface MainContentProps {
   project?: {
     id: string;
     name: string;
-    messages: any[];
-    data: any;
+    messages: unknown[];
+    data: Record<string, unknown>;
     createdAt: Date;
     updatedAt: Date;
   };

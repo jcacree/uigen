@@ -18,7 +18,7 @@ export default async function ProjectPage({ params }: PageProps) {
   let project;
   try {
     project = await getProject(projectId);
-  } catch (error) {
+  } catch {
     // If project not found or user doesn't have access, redirect to home
     redirect("/");
   }

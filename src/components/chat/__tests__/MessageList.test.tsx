@@ -8,6 +8,13 @@ vi.mock("../MarkdownRenderer", () => ({
   MarkdownRenderer: ({ content }: { content: string }) => <div>{content}</div>,
 }));
 
+// Mock the ToolStatus component
+vi.mock("../ToolStatus", () => ({
+  ToolStatus: ({ toolInvocation }: { toolInvocation: { toolName: string; args: Record<string, unknown> } }) => (
+    <div data-testid="tool-status">{toolInvocation.args.command as string} {toolInvocation.args.path as string}</div>
+  ),
+}));
+
 afterEach(() => {
   cleanup();
 });
@@ -65,7 +72,7 @@ test("MessageList renders messages with parts", () => {
           type: "tool-invocation",
           toolInvocation: {
             toolCallId: "asdf",
-            args: {},
+            args: { command: "create", path: "/App.jsx" },
             toolName: "str_replace_editor",
             state: "result",
             result: "Success",
@@ -78,7 +85,7 @@ test("MessageList renders messages with parts", () => {
   render(<MessageList messages={messages} />);
 
   expect(screen.getByText("Creating your component...")).toBeDefined();
-  expect(screen.getByText("str_replace_editor")).toBeDefined();
+  expect(screen.getByTestId("tool-status")).toBeDefined();
 });
 
 test("MessageList shows content for assistant message with content", () => {
